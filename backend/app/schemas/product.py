@@ -1,14 +1,12 @@
-from datetime import date
 from pydantic import BaseModel
 
 
 class ProductCreate(BaseModel):
-    product_name: str
-    quantity: int
+    name: str
     category: str
-    expiry_date: date
-    buying_price: float
-    selling_price: float
+    price: float
+    quantity: int
+    description: str
 
 
 class ProductResponse(ProductCreate):

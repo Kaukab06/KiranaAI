@@ -1,19 +1,20 @@
-from sqlalchemy import Column, Integer, String, Float, Date
+from sqlalchemy import Column, Integer, String, Float
+
 from app.database.database import Base
+
 
 class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
 
-    product_name = Column(String, nullable=False)
+    name = Column(String(100), nullable=False)
 
-    quantity = Column(Integer, nullable=False)
+    category = Column(String(100))
 
-    category = Column(String)
+    price = Column(Float)
 
-    expiry_date = Column(Date)
+    quantity = Column(Integer)
 
-    buying_price = Column(Float)
-
-    selling_price = Column(Float)
+    description = Column(String(300))
+   

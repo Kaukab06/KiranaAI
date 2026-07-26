@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.database import SessionLocal
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductResponse
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/products",
+    tags=["Products"]
+)
 
 
-# Database Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -17,28 +19,53 @@ def get_db():
         db.close()
 
 
-# POST API - Add Product
-@router.post("/products", response_model=ProductResponse)
+@router.post("/", response_model=ProductResponse)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+    db_product = Product(**product.model_dump())
 
-    new_product = Product(
-        product_name=product.product_name,
-        quantity=product.quantity,
-        category=product.category,
-        expiry_date=product.expiry_date,
-        buying_price=product.buying_price,
-        selling_price=product.selling_price
-    )
-
-    db.add(new_product)
+    db.add(db_product)
     db.commit()
-    db.refresh(new_product)
+    db.refresh(db_product)
 
-    return new_product
+    return db_product
 
 
-# GET API - Get All Products
-@router.get("/products", response_model=list[ProductResponse])
+@router.get("/", response_model=list[ProductResponse])
 def get_products(db: Session = Depends(get_db)):
-
     return db.query(Product).all()
+
+
+@router.get("/{product_id}", response_model=ProductResponse)
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(
+        Product.id == product_id
+    ).first()
+
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
+
+    return product
+
+
+@router.delete("/{product_id}")
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(
+        Product.id == product_id
+    ).first()
+
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
+
+    db.delete(product)
+    db.commit()
+
+    return {
+        "message": "Product deleted successfully"
+    }
+
