@@ -50,3 +50,6 @@ def home():
     return {
         "message": "🚀 Kirana AI Backend Running Successfully"
     }
+from app.api.ai_routes import router as ai_router
+
+app.include_router(ai_router)
