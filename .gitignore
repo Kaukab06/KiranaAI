@@ -1,16 +1,7 @@
-# Python
+
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-
-# Virtual environment
 venv/
 .env
-
-# Node
 node_modules/
-
-# Frontend build
-dist/
-build/
