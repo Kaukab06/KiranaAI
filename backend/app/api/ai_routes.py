@@ -15,7 +15,6 @@ class AIRequest(BaseModel):
 
 @router.post("/chat")
 def chat(data: AIRequest):
-
     answer = ask_ai(data.question)
 
     return {
