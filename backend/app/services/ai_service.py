@@ -1,28 +1,24 @@
 import os
-import logging
-import google.generativeai as genai
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-if not API_KEY:
-    logging.error("GEMINI_API_KEY not set in environment or .env")
-else:
-    genai.configure(api_key=API_KEY)
-
-model = genai.GenerativeModel("gemini-2.5-flash")
-
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 def ask_ai(question: str):
-    """Ask the Gemini model. Raises RuntimeError if API key missing or logs and re-raises on request errors."""
-    if not API_KEY:
-        raise RuntimeError("GEMINI_API_KEY is not set. Set GEMINI_API_KEY in your environment or .env file.")
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "user",
+                "content": question
+            }
+        ],
+        temperature=0.7,
+        max_tokens=500,
+    )
 
-    try:
-        response = model.generate_content(question)
-        # response may be an object; attempt to return text if available
-        return getattr(response, "text", str(response))
-    except Exception:
-        logging.exception("Generative AI request failed")
-        raise
+    return completion.choices[0].message.content

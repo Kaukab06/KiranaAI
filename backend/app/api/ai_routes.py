@@ -28,7 +28,6 @@ def get_db():
 
 @router.post("/chat")
 def chat(data: AIRequest):
-
     answer = ask_ai(data.question)
 
     return {
