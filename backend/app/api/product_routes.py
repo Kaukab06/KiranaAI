@@ -149,6 +149,68 @@ def dashboard(
     }
 
 
+# ----- Expiry Alerts -----
+@router.get("/expiring-soon")
+def expiring_soon(
+    days: int = 7,
+    db: Session = Depends(get_db)
+):
+    """Get products expiring within the specified days"""
+    from datetime import datetime, timedelta
+    
+    today = datetime.utcnow()
+    expiry_threshold = today + timedelta(days=days)
+    
+    return db.query(Product).filter(
+        Product.expiry_date.isnot(None),
+        Product.expiry_date >= today,
+        Product.expiry_date <= expiry_threshold
+    ).all()
+
+
+@router.get("/expired")
+def expired_products(db: Session = Depends(get_db)):
+    """Get all expired products"""
+    from datetime import datetime
+    
+    return db.query(Product).filter(
+        Product.expiry_date.isnot(None),
+        Product.expiry_date < datetime.utcnow()
+    ).all()
+
+
+# ----- Low Stock Alerts -----
+@router.get("/low-stock-alerts")
+def low_stock_alerts(db: Session = Depends(get_db)):
+    """Get all products below their low stock threshold"""
+    return db.query(Product).filter(
+        Product.quantity <= Product.low_stock_threshold
+    ).all()
+
+
+@router.get("/stock-status")
+def stock_status(db: Session = Depends(get_db)):
+    """Get comprehensive stock status report"""
+    low_stock = db.query(Product).filter(
+        Product.quantity <= Product.low_stock_threshold
+    ).count()
+    
+    out_of_stock = db.query(Product).filter(
+        Product.quantity == 0
+    ).count()
+    
+    total_value = db.query(
+        func.sum(Product.price * Product.quantity)
+    ).scalar() or 0
+    
+    return {
+        "low_stock_count": low_stock,
+        "out_of_stock_count": out_of_stock,
+        "total_inventory_value": total_value,
+        "products_needing_restocking": low_stock
+    }
+
+
 # -----------------------------
 # Sort Products
 # -----------------------------

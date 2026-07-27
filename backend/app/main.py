@@ -12,6 +12,7 @@ from app.models.user import User
 from app.api.product_routes import router as product_router
 from app.api.auth_routes import router as auth_router
 from app.api.user_routes import router as user_router
+from app.api.bill_routes import router as bill_router
 
 
 # Create all database tables
@@ -42,6 +43,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(product_router)
+app.include_router(bill_router)
 
 
 # Root Endpoint

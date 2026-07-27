@@ -2,12 +2,13 @@ import React, { useState } from "react";
 
 const ProductForm = ({ refreshProducts }) => {
   const [product, setProduct] = useState({
-    product_name: "",
+    name: "",
     quantity: "",
     category: "",
     expiry_date: "",
-    buying_price: "",
-    selling_price: "",
+    price: "",
+    description: "",
+    low_stock_threshold: 10,
   });
 
   const handleChange = (e) => {
@@ -22,25 +23,36 @@ const ProductForm = ({ refreshProducts }) => {
     e.preventDefault();
 
     try {
+      const payload = {
+        name: product.name,
+        quantity: parseInt(product.quantity),
+        category: product.category,
+        price: parseFloat(product.price),
+        description: product.description,
+        low_stock_threshold: parseInt(product.low_stock_threshold),
+        expiry_date: product.expiry_date ? new Date(product.expiry_date).toISOString() : null,
+      };
+
       const response = await fetch("http://localhost:8000/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(product),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         alert("Product added successfully!");
         setProduct({
-          product_name: "",
+          name: "",
           quantity: "",
           category: "",
           expiry_date: "",
-          buying_price: "",
-          selling_price: "",
+          price: "",
+          description: "",
+          low_stock_threshold: 10,
         });
-        refreshProducts();
+        if (refreshProducts) refreshProducts();
       } else {
         alert("Failed to add product");
       }
@@ -59,8 +71,8 @@ const ProductForm = ({ refreshProducts }) => {
           </label>
           <input
             type="text"
-            name="product_name"
-            value={product.product_name}
+            name="name"
+            value={product.name}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -91,6 +103,18 @@ const ProductForm = ({ refreshProducts }) => {
         </div>
 
         <div>
+          <label className="block text-sm font-medium mb-1">Price</label>
+          <input
+            type="number"
+            name="price"
+            value={product.price}
+            onChange={handleChange}
+            step="0.01"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
           <label className="block text-sm font-medium mb-1">Expiry Date</label>
           <input
             type="date"
@@ -102,29 +126,23 @@ const ProductForm = ({ refreshProducts }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Buying Price
-          </label>
+          <label className="block text-sm font-medium mb-1">Low Stock Threshold</label>
           <input
             type="number"
-            name="buying_price"
-            value={product.buying_price}
+            name="low_stock_threshold"
+            value={product.low_stock_threshold}
             onChange={handleChange}
-            step="0.01"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Selling Price
-          </label>
+          <label className="block text-sm font-medium mb-1">Description</label>
           <input
-            type="number"
-            name="selling_price"
-            value={product.selling_price}
+            type="text"
+            name="description"
+            value={product.description}
             onChange={handleChange}
-            step="0.01"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
