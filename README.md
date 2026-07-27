@@ -186,7 +186,7 @@ POST /auth/login
 ## Demo
 
 The demo video is available in the Google Drive submission folder.
-
+-https://www.loom.com/share/0a006305b71e40948b7a40f30195343c
 ---
 
 ## Documentation
@@ -197,20 +197,19 @@ Project documentation is included in the submission.
 
 ## GitHub Repository
 
-Add your repository link here.
+https://github.com/Kaukab06/KiranaAI
 
 ---
 
 ## Team Details
 
-*Team Name:* Your Team Name
+*Team Name:* Neobots
 
 ### Members
 
-- Member 1
-- Member 2
-- Member 3
-- Member 4
+- Kaukab Erum
+- Kaushiki Singh
+- Komal kumari
 
 ---
 
